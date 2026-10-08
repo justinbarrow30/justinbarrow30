@@ -11,34 +11,33 @@ the longer it watches a network.
 #### 🛡️ CerberusAI, an agentic SOC that investigates alerts on its own
 **[github.com/justinbarrow30/cerberus-ai →](https://github.com/justinbarrow30/cerberus-ai)**
 
-An open-source, read-only agentic SOC. You connect it to your SIEM over its API and it investigates
-each alert on its own, then returns an auto-close or escalate verdict with plain-English evidence
-instead of just adding to the queue.
-
-**How it gets smarter over time.** It does not use machine learning or any black-box model. Instead
-it keeps a memory (a local database) of everything it has investigated. Every case it works adds
-facts: which assets exist and how critical each one is, a map of which machines normally talk to
-which, and each asset's usual activity levels. When a new alert comes in, it reads that memory
-before it decides, and connects the dots. Is this a connection the network has never made before?
-Is this login volume far above what is normal for this specific host? Has this source caused
-trouble already? Each of those is a real signal it weighs instead of looking at the alert in
-isolation. The longer it runs, the more complete that picture of "normal" becomes, so its read on
-normal versus suspicious keeps getting more accurate. On day one it is cautious because it has
-little history; after a week on your real traffic it knows your network the way a veteran analyst
-would, except every call is backed by recorded facts and plain math you can audit.
-
-**Why it is easy to adopt:**
-
-- **Quick to integrate.** You connect it to your SIEM in a browser wizard: paste the address and a
-  read-only key, test the connection, done. No agents to roll out and no code to write.
-- **Safe to approve.** It is read-only and one-way, with no path to change anything it touches, so
-  the security sign-off is far easier than for a tool that can act on your systems.
-- **Anyone can read it.** The dashboard explains each incident in plain English, so you do not have
-  to be a seasoned analyst to understand what happened and why.
-- **Use your own AI and SIEM.** Bring whichever LLM your org already approved, and point it at
-  whatever SIEM you run. Swapping either one never touches the core.
+Most enterprises already own the tools for a strong SOC. What they lack is the people and expertise
+to run them at full strength. CerberusAI closes that gap. It plugs into your SIEM, works with any
+LLM you choose, and continuously reads your alert traffic to build a live baseline of how your
+network actually behaves. The moment your SIEM flags something, it investigates on its own: it
+checks the alert against that baseline, pulls the device's history, decides whether the behavior is
+normal, and returns an auto-close or escalate verdict with plain-English evidence in seconds. It
+becomes the most knowledgeable analyst on the team, one that never sleeps and never forgets.
 
 [![CerberusAI console](https://raw.githubusercontent.com/justinbarrow30/cerberus-ai/main/docs/console.png)](https://github.com/justinbarrow30/cerberus-ai)
+
+**For the more technical, here is how it actually works:**
+
+- **Read-only and one-way.** You connect it with a credential you control, and it only ever reads.
+  There is no write path in the code, so it can never change your SIEM, hosts, or network gear, which
+  makes the security sign-off easy.
+- **It learns without machine learning.** No black-box model. It keeps a memory of your assets, of
+  which machines normally talk to which, and of each host's normal activity, then weighs every new
+  alert against that history. A connection a device has never made before, especially to a critical
+  asset, is how it catches lateral movement that a static rule would miss.
+- **Explainable by design.** The judgment is deterministic statistics plus a graph, so every verdict
+  is auditable rather than a mystery score, which matters in security and compliance.
+- **Built for real networks.** It keys its memory on a stable identity, so a host's history is not
+  lost when its IP changes through DHCP, containers, or autoscaling.
+- **Your stack.** Bring-your-own-LLM, and a small adapter per SIEM, so swapping either one never
+  touches the core.
+- **Roadmap.** Optional network-traffic ingestion via port mirroring (SPAN / ERSPAN), to enrich the
+  baseline with live traffic instead of only what the SIEM already flags.
 
 Python · FastAPI · Pydantic structured outputs · Model Context Protocol · SQLite memory · Docker.
 
