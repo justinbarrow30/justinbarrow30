@@ -30,10 +30,11 @@ becomes the most knowledgeable analyst on the team, one that never sleeps and ne
   makes the security sign-off easy.
 - **It learns your environment (the deterministic core).** As it runs, it builds a picture of your
   network: what each machine is, which machines normally talk to each other, and what a normal day
-  looks like for each one. Every new alert is checked against that picture. So when a machine suddenly
-  reaches something it has never touched before, especially a critical system, it stands out right away
-  as the kind of move an attacker makes, the lateral movement a fixed rule would miss. All of this is
-  plain math and a map of the network, not a black box, so every decision can be traced.
+  looks like for each one. Every new alert is checked against that picture. So when a machine opens a
+  connection it has never made before, especially to a critical system, that break from its normal
+  pattern surfaces right away. Lateral movement often looks exactly like this: a host reaching somewhere
+  it has no history of going. All of this is plain math and a map of the network, not a black box, so
+  every decision can be traced.
 - **Machine-learning anomaly layer.** A simple threshold catches one metric going out of range at a
   time. The harder case is activity that looks fine on every individual metric but is abnormal taken
   as a whole. To catch that, I trained unsupervised models on each machine's normal behavior across all
