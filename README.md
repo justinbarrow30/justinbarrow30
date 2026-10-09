@@ -14,12 +14,11 @@ the longer it watches a network.
 Most enterprises already own the tools for a strong SOC. What they lack is the people and expertise
 to run them at full strength. CerberusAI closes that gap. It plugs into your SIEM, works with any
 LLM you choose, and continuously reads your alert traffic to build a live baseline of how your
-network actually behaves. It uses machine learning to learn each machine's normal behavior across all
-of its signals at once, so it catches unusual patterns a single-metric rule would miss. The moment
-your SIEM flags something, it investigates on its own: it
-checks the alert against that baseline, pulls the device's history, decides whether the behavior is
-normal, and returns an auto-close or escalate verdict with plain-English evidence in seconds. It
-becomes the most knowledgeable analyst on the team, one that never sleeps and never forgets.
+network actually behaves. On top of that, a machine-learning model learns what normal looks like
+across many signals at once, so it catches unusual patterns a single metric would miss. The moment
+your SIEM flags something, it investigates on its own: it checks the alert against that baseline,
+pulls the device's history, decides whether the behavior is normal, and returns an auto-close or
+escalate verdict with plain-English evidence in seconds.
 
 [![CerberusAI console](https://raw.githubusercontent.com/justinbarrow30/cerberus-ai/main/docs/console.png)](https://github.com/justinbarrow30/cerberus-ai)
 
@@ -41,14 +40,16 @@ single one has to be right on its own.
   every decision can be traced.
 - **Machine-learning anomaly layer.** The hard part of detection is behavior that looks normal on
   every individual signal but is anomalous in combination. To catch that, I trained unsupervised models
-  (they learn from normal activity alone, with no labeled attacks) on each machine's behavior across
-  all of its features at once, so they score how unusual the overall pattern is rather than any single
+  (they learn from normal activity alone, with no labeled attacks) on normal behavior across all of
+  these features at once, so they score how unusual the overall pattern is rather than any single
   number. This is the standard UEBA approach (user and entity behavior analytics). Under the hood:
   - An **Isolation Forest** (scikit-learn) isolates statistical outliers; a small **PyTorch
     autoencoder** flags behavior it cannot reconstruct. Each model's raw score becomes a percentile
     against normal, and the ensemble is their mean.
-  - On a held-out evaluation (normal traffic plus synthetic attacks across brute-force, lateral-spread
-    and off-hours patterns) it reaches **0.996 ROC-AUC** and **0.97 F1**, beating either model alone.
+  - On a synthetic benchmark (normal traffic plus injected brute-force, lateral-spread and off-hours
+    attacks) the ensemble reaches **0.996 ROC-AUC**, beating either model alone. That validates the
+    method, not real-world performance; a harness to evaluate it on the Los Alamos auth + red-team
+    dataset ships in the repo.
   - Every score ships with **feature attributions** (the behaviors that drove it), so it stays
     explainable, and it is **one signal the agent weighs, never the judge**. The deterministic core
     still makes the verdict. It trains on the behavior the tool accumulates, so it sharpens on your
