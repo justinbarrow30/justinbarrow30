@@ -26,14 +26,23 @@ becomes the most knowledgeable analyst on the team, one that never sleeps and ne
 - **Read-only and one-way.** You connect it with a credential you control, and it only ever reads.
   There is no write path in the code, so it can never change your SIEM, hosts, or network gear, which
   makes the security sign-off easy.
-- **It learns without machine learning.** No black-box model. It keeps a memory of your assets, of
-  which machines normally talk to which, and of each host's normal activity, then weighs every new
-  alert against that history. A connection a device has never made before, especially to a critical
-  asset, is how it catches lateral movement that a static rule would miss.
-- **Machine learning, kept explainable.** On top of the deterministic core, an optional
-  anomaly-detection ensemble (an Isolation Forest + a PyTorch autoencoder, ~0.996 ROC-AUC on held-out
-  tests) catches unusual *combinations* of behavior and reports the features that drove each score. It
-  is a signal the agent weighs, never the judge, so verdicts stay auditable rather than a mystery number.
+- **It learns your environment (deterministic core).** It keeps a memory of your assets, which
+  machines normally talk to which, and each host's own normal activity, then weighs every new alert
+  against that history. A connection a device has never made before, especially to a critical asset,
+  is how it catches lateral movement a static rule would miss. This core is deterministic statistics
+  plus a graph, so it is fully auditable.
+- **Machine-learning anomaly layer (UEBA).** On top of that core, an optional unsupervised **ensemble**
+  learns the environment's normal *multivariate* behavior and flags unusual combinations of behavior
+  that single-metric rules miss:
+  - An **Isolation Forest** (scikit-learn) isolates statistical outliers; a small **PyTorch
+    autoencoder** flags behavior it cannot reconstruct. Each model's raw score becomes a percentile
+    against normal, and the ensemble is their mean.
+  - On a held-out evaluation (normal traffic plus synthetic attacks across brute-force, lateral-spread
+    and off-hours patterns) it reaches **0.996 ROC-AUC** and **0.97 F1**, beating either model alone.
+  - Every score ships with **feature attributions** (the behaviors that drove it), so it stays
+    explainable, and it is **one signal the agent weighs, never the judge**. The deterministic core
+    still makes the verdict. It trains on the behavior the tool accumulates, so it sharpens on your
+    real traffic.
 - **Built for real networks.** It keys its memory on a stable identity, so a host's history is not
   lost when its IP changes through DHCP, containers, or autoscaling.
 - **Your stack.** Bring-your-own-LLM, and a small adapter per SIEM, so swapping either one never
