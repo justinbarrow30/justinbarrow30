@@ -14,7 +14,9 @@ the longer it watches a network.
 Most enterprises already own the tools for a strong SOC. What they lack is the people and expertise
 to run them at full strength. CerberusAI closes that gap. It plugs into your SIEM, works with any
 LLM you choose, and continuously reads your alert traffic to build a live baseline of how your
-network actually behaves. The moment your SIEM flags something, it investigates on its own: it
+network actually behaves. It uses machine learning to learn each machine's normal behavior across all
+of its signals at once, so it catches unusual patterns a single-metric rule would miss. The moment
+your SIEM flags something, it investigates on its own: it
 checks the alert against that baseline, pulls the device's history, decides whether the behavior is
 normal, and returns an auto-close or escalate verdict with plain-English evidence in seconds. It
 becomes the most knowledgeable analyst on the team, one that never sleeps and never forgets.
