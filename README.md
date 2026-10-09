@@ -30,8 +30,10 @@ becomes the most knowledgeable analyst on the team, one that never sleeps and ne
   which machines normally talk to which, and of each host's normal activity, then weighs every new
   alert against that history. A connection a device has never made before, especially to a critical
   asset, is how it catches lateral movement that a static rule would miss.
-- **Explainable by design.** The judgment is deterministic statistics plus a graph, so every verdict
-  is auditable rather than a mystery score, which matters in security and compliance.
+- **Machine learning, kept explainable.** On top of the deterministic core, an optional
+  anomaly-detection ensemble (an Isolation Forest + a PyTorch autoencoder, ~0.996 ROC-AUC on held-out
+  tests) catches unusual *combinations* of behavior and reports the features that drove each score. It
+  is a signal the agent weighs, never the judge, so verdicts stay auditable rather than a mystery number.
 - **Built for real networks.** It keys its memory on a stable identity, so a host's history is not
   lost when its IP changes through DHCP, containers, or autoscaling.
 - **Your stack.** Bring-your-own-LLM, and a small adapter per SIEM, so swapping either one never
@@ -39,7 +41,8 @@ becomes the most knowledgeable analyst on the team, one that never sleeps and ne
 - **Roadmap.** Optional network-traffic ingestion via port mirroring (SPAN / ERSPAN), to enrich the
   baseline with live traffic instead of only what the SIEM already flags.
 
-Python · FastAPI · Pydantic structured outputs · Model Context Protocol · SQLite memory · Docker.
+Python · FastAPI · Pydantic structured outputs · Model Context Protocol · scikit-learn · PyTorch ·
+SQLite memory · Docker.
 
 #### ⚽ MECA, a 7v7 football tournament app
 **[github.com/justinbarrow30/meca-app →](https://github.com/justinbarrow30/meca-app)**
