@@ -30,14 +30,13 @@ becomes the most knowledgeable analyst on the team, one that never sleeps and ne
   network: what each machine is, which machines normally talk to each other, and what a normal day
   looks like for each one. Every new alert is checked against that picture. So when a machine suddenly
   reaches something it has never touched before, especially a critical system, it stands out right away
-  as the kind of move an attacker makes, the lateral movement a fixed rule would sail right past. All
-  of this is plain math and a map of the network, not a black box, so every decision can be traced.
-- **Machine-learning anomaly layer.** The checks above are great at catching one thing going wrong at
-  a time. But a real attacker often looks normal on every single measure, and only looks suspicious
-  once you put all of them together. So I trained machine-learning models to learn what "normal" looks
-  like across a machine's whole behavior at once, and flag the combinations that do not fit, even ones
-  nobody ever wrote a rule for. (This is the idea the industry calls UEBA, user and entity behavior
-  analytics.) Under the hood:
+  as the kind of move an attacker makes, the lateral movement a fixed rule would miss. All of this is
+  plain math and a map of the network, not a black box, so every decision can be traced.
+- **Machine-learning anomaly layer.** A simple threshold catches one metric going out of range at a
+  time. The harder case is activity that looks fine on every individual metric but is abnormal taken
+  as a whole. To catch that, I trained unsupervised models on each machine's normal behavior across all
+  of its features at once, so they score how unusual the overall pattern is rather than any single
+  number. This is the standard UEBA approach (user and entity behavior analytics). Under the hood:
   - An **Isolation Forest** (scikit-learn) isolates statistical outliers; a small **PyTorch
     autoencoder** flags behavior it cannot reconstruct. Each model's raw score becomes a percentile
     against normal, and the ensemble is their mean.
