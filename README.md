@@ -25,6 +25,11 @@ becomes the most knowledgeable analyst on the team, one that never sleeps and ne
 
 **For the more technical, here is how it actually works:**
 
+Bottom line: CerberusAI runs three independent detection layers, a deterministic baseline of the
+network, a machine-learning model of normal behavior, and an LLM agent that investigates each alert
+and weighs the other two into one grounded verdict. Different layers catch different attacks, so no
+single one has to be right on its own.
+
 - **Read-only and one-way.** You connect it with a credential you control, and it only ever reads.
   There is no write path in the code, so it can never change your SIEM, hosts, or network gear, which
   makes the security sign-off easy.
@@ -34,10 +39,10 @@ becomes the most knowledgeable analyst on the team, one that never sleeps and ne
   connection it has never made before, especially to a critical system, that break from its normal
   pattern surfaces right away. All of this is plain math and a map of the network, not a black box, so
   every decision can be traced.
-- **Machine-learning anomaly layer.** A simple threshold catches one metric going out of range at a
-  time. The harder case is activity that looks fine on every individual metric but is abnormal taken
-  as a whole. To catch that, I trained unsupervised models on each machine's normal behavior across all
-  of its features at once, so they score how unusual the overall pattern is rather than any single
+- **Machine-learning anomaly layer.** The hard part of detection is behavior that looks normal on
+  every individual signal but is anomalous in combination. To catch that, I trained unsupervised models
+  (they learn from normal activity alone, with no labeled attacks) on each machine's behavior across
+  all of its features at once, so they score how unusual the overall pattern is rather than any single
   number. This is the standard UEBA approach (user and entity behavior analytics). Under the hood:
   - An **Isolation Forest** (scikit-learn) isolates statistical outliers; a small **PyTorch
     autoencoder** flags behavior it cannot reconstruct. Each model's raw score becomes a percentile
