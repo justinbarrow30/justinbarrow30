@@ -26,14 +26,18 @@ becomes the most knowledgeable analyst on the team, one that never sleeps and ne
 - **Read-only and one-way.** You connect it with a credential you control, and it only ever reads.
   There is no write path in the code, so it can never change your SIEM, hosts, or network gear, which
   makes the security sign-off easy.
-- **It learns your environment (deterministic core).** It keeps a memory of your assets, which
-  machines normally talk to which, and each host's own normal activity, then weighs every new alert
-  against that history. A connection a device has never made before, especially to a critical asset,
-  is how it catches lateral movement a static rule would miss. This core is deterministic statistics
-  plus a graph, so it is fully auditable.
-- **Machine-learning anomaly layer (UEBA).** On top of that core, an optional unsupervised **ensemble**
-  learns the environment's normal *multivariate* behavior and flags unusual combinations of behavior
-  that single-metric rules miss:
+- **It learns your environment (the deterministic core).** As it runs, it builds a picture of your
+  network: what each machine is, which machines normally talk to each other, and what a normal day
+  looks like for each one. Every new alert is checked against that picture. So when a machine suddenly
+  reaches something it has never touched before, especially a critical system, it stands out right away
+  as the kind of move an attacker makes, the lateral movement a fixed rule would sail right past. All
+  of this is plain math and a map of the network, not a black box, so every decision can be traced.
+- **Machine-learning anomaly layer.** The checks above are great at catching one thing going wrong at
+  a time. But a real attacker often looks normal on every single measure, and only looks suspicious
+  once you put all of them together. So I trained machine-learning models to learn what "normal" looks
+  like across a machine's whole behavior at once, and flag the combinations that do not fit, even ones
+  nobody ever wrote a rule for. (This is the idea the industry calls UEBA, user and entity behavior
+  analytics.) Under the hood:
   - An **Isolation Forest** (scikit-learn) isolates statistical outliers; a small **PyTorch
     autoencoder** flags behavior it cannot reconstruct. Each model's raw score becomes a percentile
     against normal, and the ensemble is their mean.
